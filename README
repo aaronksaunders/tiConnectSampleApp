@@ -31,6 +31,11 @@ So if you look in the `alloy.js` file in the project's root directory, you will 
     // line 21 & the same on line 43
     return mod.sync(method, model, opts);
 
+A Better HTTPClient
+====
+[Titanium Version of SuperAgent](https://github.com/tipm/superagent) helps to make the code in the sync adapter cleaner
+
+
 ----------------------------------
 Stuff our legal folk make us say:
 
