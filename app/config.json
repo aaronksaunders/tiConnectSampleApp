@@ -1,0 +1,16 @@
+{
+	"global": {}, 
+	"env:development": {
+		"bluemix" : {
+			"appId" : "244246c0-bf7a-41f9-b561-f71815d33bd8",
+			"appSecret" : "e1567ab2d13015d9dbef414213e7ac6bdb1c8530"
+		}
+	},
+	"env:test": {}, 
+	"env:production": {}, 
+	"os:android": {},
+	"os:blackberry": {},
+	"os:ios": {},
+	"os:mobileweb": {},
+	"dependencies": {}
+}

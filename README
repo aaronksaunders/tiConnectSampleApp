@@ -1,0 +1,24 @@
+Welcome to your Appcelerator Titanium Mobile Project
+
+This is a sample project showing how to create a sync adapter that integrates with IBM BlueMix
+
+This code utilizes the following credentials which can be found in the `config.json` file
+
+	"env:development": {
+		"bluemix" : {
+			"appId" : "244246c0-bf7a-41f9-b561-f71815d33bd8",
+			"appSecret" : "e1567ab2d13015d9dbef414213e7ac6bdb1c8530"
+		}
+	},
+
+
+
+----------------------------------
+Stuff our legal folk make us say:
+
+
+Copyright (c) 2014 by Aaron K Saunders. All Rights Reserved.
+
+Licensed under the Apache Public License (Version 2). Please
+see the LICENSE file for the full license.
+
