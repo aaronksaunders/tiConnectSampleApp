@@ -33,7 +33,90 @@ So if you look in the `alloy.js` file in the project's root directory, you will 
 
 A Better HTTPClient
 ====
-[Titanium Version of SuperAgent](https://github.com/tipm/superagent) helps to make the code in the sync adapter cleaner
+[Titanium Version of SuperAgent](https://github.com/tipm/superagent) helps to make the code in the sync adapter cleaner and more readable.
+
+See Example below
+
+
+```
+#!javascript
+
+	superAgent.get(readURL)//
+	.set('IBM-Application-Secret', Alloy.CFG.bluemix.appSecret)//
+	.set('Accept', 'application/json')//
+	.end(function(res) {
+	    console.log(res.body.object);
+            // do something with response...
+
+	});
+```
+
+Clean interaction with REST API using models
+====
+### Saving an object ###
+
+```
+#!javascript
+
+function saveObject() {
+	var data = {
+		"attributes" : {
+			"title" : "Test With Class Name",
+			"address" : "1134 Buchanan St, NW",
+			"_geoloc" : [151.201523, -33.86887]
+		}
+	};
+
+	var model = Alloy.createModel("Location");
+	var $promise = model.save(data);
+
+	$promise.promise.then(function(_response) {
+		console.log("SUCCESS " + JSON.stringify(_response, null, 2));
+	}, function(_error) {
+		console.log("ERROR " + JSON.stringify(_error, null, 2));
+	});
+}
+```
+### Fetching an object ###
+
+```
+#!javascript
+
+var collection = Alloy.createCollection("Location");
+
+// FETCH ONE ITEM BY ID WITH PROMISE
+var $promise = collection.fetch({
+	id : "e83b4bb4692e0798d54bd385544179547493349d"
+});
+
+$promise.promise.then(function(_result) {
+	// get one item
+	console.log("Success " + JSON.stringify(_result, null, 2));
+}, function(_error) {
+	console.log("In Error Handler " + _error);
+});
+```
+
+
+### Fetching All Objects ###
+
+```
+#!javascript
+
+// create the collection
+var collection = Alloy.createCollection("Location");
+
+// FETCH ONE ITEM BY ID WITH PROMISE
+var $promise = collection.fetch();
+
+$promise.promise.then(function(_result) {
+	// get all items, no id specified
+	console.log("in then " + JSON.stringify(_result, null, 2));
+}, function(_error) {
+	console.log("in error " + _error);
+});
+```
+
 
 
 ----------------------------------
