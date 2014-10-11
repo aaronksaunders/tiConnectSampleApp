@@ -51,6 +51,10 @@ See Example below
 	});
 ```
 
+Utilizing Model and Collections ability to be extended 
+====
+The data that is returned from the REST API is not correctly formatted for the Backbone models/collections. In the Model file, we extend the objects and utilize the [Backbone.Model.parse](http://backbonejs.org/#Model-parse) functionality to clean up the data and set the response correctly
+
 Clean interaction with REST API using models
 ====
 ### Saving an object ###
