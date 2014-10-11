@@ -1,7 +1,14 @@
-Welcome to your Appcelerator Titanium Mobile Project
+Welcome to your Appcelerator Titanium Mobile Project for TiConnect Conference
+====
+![Screenshot 2014-10-07 09.45.35.png](https://bitbucket.org/repo/eny6ab/images/4039549732-Screenshot%202014-10-07%2009.45.35.png)
 
-This is a sample project showing how to create a sync adapter that integrates with IBM BlueMix
+This is a sample project showing how to create a sync adapter that integrates with [IBM BlueMix - Mobile Cloud](https://www.ng.bluemix.net/docs/#starters/mobile/index.html#overview)
+====
+![Screenshot 2014-10-10 17.24.18.png](https://bitbucket.org/repo/eny6ab/images/1140950345-Screenshot%202014-10-10%2017.24.18.png)
 
+
+IBM BlueMix Credentials... Use Your Own!!
+=====
 This code utilizes the following credentials which can be found in the `config.json` file
 
 	"env:development": {
@@ -11,7 +18,18 @@ This code utilizes the following credentials which can be found in the `config.j
 		}
 	},
 
+Hacking of alloy.js to get promises to work
+=====
 
+We are using promises in this adapter to avoid the pain of callback hell, see more information on callbacks here
+[Q Promises - A tool for making and composing asynchronous promises in JavaScript](http://documentup.com/kriskowal/q/)
+
+We had to do some special hacking here to get promises to work in the sync adapter because of the way that controllers and models are created; basically they do not return anything after the object is created and that is where I needed to return the promise.
+
+So if you look in the `alloy.js` file in the project's root directory, you will see that I overrode the creation methods for the Collection and the Model. The only change is the addition of the return from the sync call
+
+    // line 21 & the same on line 43
+    return mod.sync(method, model, opts);
 
 ----------------------------------
 Stuff our legal folk make us say:
@@ -21,4 +39,3 @@ Copyright (c) 2014 by Aaron K Saunders. All Rights Reserved.
 
 Licensed under the Apache Public License (Version 2). Please
 see the LICENSE file for the full license.
-
