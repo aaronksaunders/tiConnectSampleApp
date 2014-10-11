@@ -52,7 +52,7 @@ function Sync(method, model, opts) {
 		} else {
 			readURL = url + '/objects?classname=' + name + '&&';
 		}
-		
+
 		superAgent.get(readURL)//
 		.set('IBM-Application-Secret', Alloy.CFG.bluemix.appSecret)//
 		.set('Accept', 'application/json')//

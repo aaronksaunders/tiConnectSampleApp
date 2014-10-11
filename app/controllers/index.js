@@ -1,6 +1,13 @@
 $.index.open();
 
+/**
+ * saves an object
+ */
 function saveObject() {
+	
+	
+	// the IBM Bluemix documentation specifies how the data must be formatted for uploading
+	// so we set up the dataas such and save it to the model.
 	var data = {
 		"attributes" : {
 			"title" : "Test With Class Name",
@@ -9,9 +16,13 @@ function saveObject() {
 		}
 	};
 
+	// create the model
 	var model = Alloy.createModel("Location");
+	
+	// call save, passing the data, and getting a promise in return
 	var $promise = model.save(data);
 
+	// handle success or error with the promise
 	$promise.promise.then(function(_response) {
 		console.log(JSON.stringify(_response, null, 2));
 	}, function(_error) {
