@@ -1,0 +1,67 @@
+
+".container": {
+	backgroundColor: "#fff",
+	layout: 'vertical'
+}
+
+"#btnContainer": {
+	top: '20dp',
+	layout: 'horizontal',
+	width : Ti.UI.SIZE,
+	height : Ti.UI.SIZE
+}
+
+'.headerLabel': {
+	top: '100dp'
+}
+
+"#name": {
+	hintText: 'Enter Name',
+	top: '20dp'
+}
+
+"#address": {
+	hintText: 'Enter Address',
+	top: '10dp'
+}
+,
+'TextField': {
+	autocapitalization: Ti.UI.TEXT_AUTOCAPITALIZATION_NONE,
+	borderStyle: Ti.UI.INPUT_BORDERSTYLE_NONE,
+	borderColor: 'black',
+	borderWidth: 1,
+	autocorrect: false,
+	top: '2dp',
+	bottom: '2dp',
+	paddingLeft: '4dp',
+	backgroundColor: 'white',
+	color: 'black',
+	width: '80%',
+	height: '36dp'
+},
+
+'TextField[platform=android]': {
+	borderRadius: 6
+},
+
+// Default Button Style
+"Button" : {
+	top: '6dp',
+	width: '100dp',
+	height: '36dp',
+	font:{
+		fontSize: '13dp'
+	}
+},
+'Button[platform=ios]' : {
+	border: 1,
+	borderColor: 'gray'	
+},
+
+'Button[platform=android]' : {
+	width: '120dp',
+},
+
+'#cancelBtn' : {
+	left : '5dp'
+}

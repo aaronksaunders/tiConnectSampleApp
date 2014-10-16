@@ -11,4 +11,53 @@
 		fontFamily: 'Helvetica Neue'
 	},
 	textAlign: 'center'
-} 
+}
+
+"#homeWindow": {
+	title: "ti-connect app"
+}
+
+".title": {
+	color: '#000',
+	left: '4dp',
+	top: 0,
+	textAlign: 'left',
+	height: Ti.UI.SIZE,
+	font: {
+		fontSize: "18sp"
+	}
+}
+
+".subtitle": {
+	color: '#000',
+	left: '4dp',
+	top: 0,
+	height: Ti.UI.SIZE,
+	font: {
+		fontSize: "16sp"
+	},
+	textAlign: 'left'
+}
+
+'.template[platform=ios]': {
+	height: '56dp'
+}
+'.template[platform=android]': {
+	height: Ti.UI.SIZE
+}
+
+'.templateView': {
+	layout: 'vertical',
+	height: Ti.UI.SIZE,
+	width: Ti.UI.FULL
+}
+
+// ios stuff
+"#addItemBtn": {
+	systemButton: Titanium.UI.iPhone.SystemButton.ADD
+}
+
+// android stuff
+"#menu1": {}
+"#actionbar": {}
+

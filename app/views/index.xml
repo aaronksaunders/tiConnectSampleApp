@@ -1,14 +1,31 @@
 <Alloy>
-	<TabGroup>
-		<Tab title="Tab 1" icon="KS_nav_ui.png">
-			<Window title="Tab 1">
-				<Label>I am Window 1</Label>
-			</Window>
-		</Tab>
-		<Tab title="Tab 2" icon="KS_nav_views.png">
-			<Window title="Tab 2">
-				<Label>I am Window 2</Label>
-			</Window>
-		</Tab>
-	</TabGroup>
+	<!-- THE IOS WINDOW -->
+	<NavigationWindow platform="ios">
+		<Window id='homeWindow'>
+			<RightNavButton>
+				<Button id="addItemBtn" onClick="doAddItemClicked" />
+			</RightNavButton>
+		</Window>
+	</NavigationWindow>
+
+	<!-- THE ANDROID WINDOW -->
+	<Window id='homeWindow'  platform="android">
+		<ActionBar id="actionbar" onHomeIconItemSelected="doMenuClick" />
+		<Menu>
+			<MenuItem id="menu1" title="Add Item" onClick="doAddItemClicked" />
+		</Menu>
+	</Window>
+
+	<!-- the list view, gets added programatically -->
+	<ListView  id='homeList' defaultItemTemplate='template'>
+		<Templates>
+			<ItemTemplate name="template" class="template">
+				<View class="templateView">
+					<Label bindId="title" class="title" id="title" />
+					<Label bindId="subtitle" class="subtitle" id="subtitle" />
+				</View>
+			</ItemTemplate>
+		</Templates>
+		<ListSection id='section'></ListSection>
+	</ListView>
 </Alloy>

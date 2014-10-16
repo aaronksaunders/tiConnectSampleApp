@@ -1,0 +1,23 @@
+'Label[platform=android]': {
+	color: '#000'
+},
+'Label': {
+	width: Ti.UI.SIZE,
+	height: Ti.UI.SIZE,
+	color: '#000'
+},
+'Window[platform=android]': {
+	modal: false
+},
+
+
+"Button[platform=android]": {
+	height: '42dp'
+},
+'Button[platform=ios]': {
+	border: 1,
+	borderColor: 'gray'
+},
+'ListView[platform=android]': {
+	separatorColor: '#CCC'
+}
