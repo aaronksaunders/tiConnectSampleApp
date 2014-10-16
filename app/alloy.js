@@ -9,6 +9,13 @@
 // object. For example:
 //
 // Alloy.Globals.someGlobalFunction = function(){};
+
+
+
+// HERE TO MAKE BINDING WORK
+var Location = Alloy.Collections.Location = Alloy.createCollection('Location');
+
+
 Alloy.C = function(name, modelDesc, model) {
     var extendObj = {
         model: model

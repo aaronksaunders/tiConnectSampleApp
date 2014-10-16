@@ -1,3 +1,8 @@
+
+// global var for locations collection
+var Location = Alloy.Collections.Location;
+
+
 function doMenuClick() {
 
 }
@@ -57,10 +62,28 @@ function drawList() {
 	});
 }
 
+/**
+ * used with the binding
+ */
+function doTransform(_model) {
+	var o = _model.toJSON();
+	return {
+		title : (o.title  || 'Missing'),
+		subtitle : (o.address  || 'Missing')
+	};
+
+}
+
 
 $.homeWindow.add($.homeList);
 $.getView().open();
-drawList();
+
+// set this to true to not use binding
+if (false) {
+	drawList();
+} else {
+	Location.fetch();
+}
 
 /**
  * saves an object

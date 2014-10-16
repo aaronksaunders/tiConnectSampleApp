@@ -17,7 +17,8 @@
 	</Window>
 
 	<!-- the list view, gets added programatically -->
-	<ListView  id='homeList' defaultItemTemplate='template'>
+	<!-- we have a list view here with and without binding -->
+	<ListView  id='homeList_noBind' defaultItemTemplate='template'>
 		<Templates>
 			<ItemTemplate name="template" class="template">
 				<View class="templateView">
@@ -27,5 +28,20 @@
 			</ItemTemplate>
 		</Templates>
 		<ListSection id='section'></ListSection>
+	</ListView>
+
+	<!-- using binding -->
+	<ListView  id='homeList' defaultItemTemplate='template'>
+		<Templates>
+			<ItemTemplate name="template" class="template">
+				<View class="templateView">
+					<Label bindId="title" class="title" id="title" />
+					<Label bindId="subtitle" class="subtitle" id="subtitle" />
+				</View>
+			</ItemTemplate>
+		</Templates>
+		<ListSection id="section" dataCollection="Location" dataTransform="doTransform">
+			<ListItem template="template" title:text="{title}" subtitle:text="{subtitle}"/>
+		</ListSection>
 	</ListView>
 </Alloy>
