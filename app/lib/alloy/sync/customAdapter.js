@@ -28,17 +28,17 @@ function Sync(method, model, opts) {
 		superAgent.post(url + '/uploads')//
 		.set('IBM-Application-Secret', Alloy.CFG.bluemix.appSecret)//
 		.send([model.attributes])//
-		.end(function(res) {
+		.end(function(err, res) {
 			//console.log(res.body.object);
-			resp = res.body;
 
-			if (resp && !resp.error) {
+			if (!err) {
+				resp = res.body;
 				model.attributes = {};
 				_.isFunction(opts.success) && opts.success(resp.object[0]);
 				promise.resolve(model);
 			} else {
-				_.isFunction(opts.error) && opts.error(resp);
-				promise.reject(resp);
+				_.isFunction(opts.error) && opts.error(err);
+				promise.reject(err);
 			}
 		});
 		break;
@@ -56,17 +56,19 @@ function Sync(method, model, opts) {
 		superAgent.get(readURL)//
 		.set('IBM-Application-Secret', Alloy.CFG.bluemix.appSecret)//
 		.set('Accept', 'application/json')//
-		.end(function(res) {
+		//.timeout(10000)//
+		.end(function(err, res) {
 			//console.log(res.body.object);
-			resp = res.body;
 
-			if (resp) {
+			if (!err) {
+				resp = res.body;
+
 				_.isFunction(opts.success) && opts.success(resp);
 				"read" === method && model.trigger("fetch sync");
 				promise.resolve(model);
 			} else {
-				_.isFunction(opts.error) && opts.error(resp);
-				promise.reject(resp);
+				_.isFunction(opts.error) && opts.error(err);
+				promise.reject(err);
 			}
 		});
 
@@ -90,6 +92,8 @@ function Sync(method, model, opts) {
 var _ = require("alloy/underscore")._;
 var $q = require("q");
 var superAgent = require('superagent');
+
+// THIS CAN BE MODEL SPECIFIC... I was being lazy
 var url = "https://mobile.ng.bluemix.net:443/data/rest/v1/apps/" + Alloy.CFG.bluemix.appId;
 
 module.exports.sync = Sync;

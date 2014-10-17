@@ -1,16 +1,262 @@
-!function(e){if("object"==typeof exports)module.exports=e();else if("function"==typeof define&&define.amd)define(e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.superagent=e()}}(function(){var define,module,exports;return (function e(t,n,r){function o(i,u){if(!n[i]){if(!t[i]){var a=typeof require=="function"&&require;if(!u&&a&&a!==s)return a(i,!0);if(s)return s(i);throw new Error("Cannot find module '"+i+"'")}var f=n[i]={exports:{}};t[i][0].call(f.exports,function(e){var n=t[i][1][e];return o(n?n:e)},f,f.exports,e,t,n,r)}return n[i].exports}var i=Array.prototype.slice;Function.prototype.bind||(Function.prototype.bind=function(e){function r(){return t.apply(this instanceof r&&e?this:e,n.concat(i.call(arguments)))}if(typeof this!="function")throw new TypeError("Function.prototype.bind - what is trying to be bound is not callable");var t=this,n=i.call(arguments,1);return r.prototype=Object.create(t.prototype),r.prototype.contructor=r,r});var s=typeof require=="function"&&require;for(var u=0;u<r.length;u++)o(r[u]);return o})({1:[function(_dereq_,module,exports){
 
-module.exports = (function () { return this; })();
+;(function(){
 
-module.exports.location = {};
+/**
+ * Require the module at `name`.
+ *
+ * @param {String} name
+ * @return {Object} exports
+ * @api public
+ */
 
-},{}],2:[function(_dereq_,module,exports){
+function require(name) {
+  var module = require.modules[name];
+  if (!module) throw new Error('failed to require "' + name + '"');
+
+  if (!('exports' in module) && typeof module.definition === 'function') {
+    module.client = module.component = true;
+    module.definition.call(this, module.exports = {}, module);
+    delete module.definition;
+  }
+
+  return module.exports;
+}
+
+/**
+ * Registered modules.
+ */
+
+require.modules = {};
+
+/**
+ * Register module at `name` with callback `definition`.
+ *
+ * @param {String} name
+ * @param {Function} definition
+ * @api private
+ */
+
+require.register = function (name, definition) {
+  require.modules[name] = {
+    definition: definition
+  };
+};
+
+/**
+ * Define a module's exports immediately with `exports`.
+ *
+ * @param {String} name
+ * @param {Generic} exports
+ * @api private
+ */
+
+require.define = function (name, exports) {
+  require.modules[name] = {
+    exports: exports
+  };
+};
+require.register("component~emitter@1.1.2", function (exports, module) {
+
+/**
+ * Expose `Emitter`.
+ */
+
+module.exports = Emitter;
+
+/**
+ * Initialize a new `Emitter`.
+ *
+ * @api public
+ */
+
+function Emitter(obj) {
+  if (obj) return mixin(obj);
+};
+
+/**
+ * Mixin the emitter properties.
+ *
+ * @param {Object} obj
+ * @return {Object}
+ * @api private
+ */
+
+function mixin(obj) {
+  for (var key in Emitter.prototype) {
+    obj[key] = Emitter.prototype[key];
+  }
+  return obj;
+}
+
+/**
+ * Listen on the given `event` with `fn`.
+ *
+ * @param {String} event
+ * @param {Function} fn
+ * @return {Emitter}
+ * @api public
+ */
+
+Emitter.prototype.on =
+Emitter.prototype.addEventListener = function(event, fn){
+  this._callbacks = this._callbacks || {};
+  (this._callbacks[event] = this._callbacks[event] || [])
+    .push(fn);
+  return this;
+};
+
+/**
+ * Adds an `event` listener that will be invoked a single
+ * time then automatically removed.
+ *
+ * @param {String} event
+ * @param {Function} fn
+ * @return {Emitter}
+ * @api public
+ */
+
+Emitter.prototype.once = function(event, fn){
+  var self = this;
+  this._callbacks = this._callbacks || {};
+
+  function on() {
+    self.off(event, on);
+    fn.apply(this, arguments);
+  }
+
+  on.fn = fn;
+  this.on(event, on);
+  return this;
+};
+
+/**
+ * Remove the given callback for `event` or all
+ * registered callbacks.
+ *
+ * @param {String} event
+ * @param {Function} fn
+ * @return {Emitter}
+ * @api public
+ */
+
+Emitter.prototype.off =
+Emitter.prototype.removeListener =
+Emitter.prototype.removeAllListeners =
+Emitter.prototype.removeEventListener = function(event, fn){
+  this._callbacks = this._callbacks || {};
+
+  // all
+  if (0 == arguments.length) {
+    this._callbacks = {};
+    return this;
+  }
+
+  // specific event
+  var callbacks = this._callbacks[event];
+  if (!callbacks) return this;
+
+  // remove all handlers
+  if (1 == arguments.length) {
+    delete this._callbacks[event];
+    return this;
+  }
+
+  // remove specific handler
+  var cb;
+  for (var i = 0; i < callbacks.length; i++) {
+    cb = callbacks[i];
+    if (cb === fn || cb.fn === fn) {
+      callbacks.splice(i, 1);
+      break;
+    }
+  }
+  return this;
+};
+
+/**
+ * Emit `event` with the given args.
+ *
+ * @param {String} event
+ * @param {Mixed} ...
+ * @return {Emitter}
+ */
+
+Emitter.prototype.emit = function(event){
+  this._callbacks = this._callbacks || {};
+  var args = [].slice.call(arguments, 1)
+    , callbacks = this._callbacks[event];
+
+  if (callbacks) {
+    callbacks = callbacks.slice(0);
+    for (var i = 0, len = callbacks.length; i < len; ++i) {
+      callbacks[i].apply(this, args);
+    }
+  }
+
+  return this;
+};
+
+/**
+ * Return array of callbacks for `event`.
+ *
+ * @param {String} event
+ * @return {Array}
+ * @api public
+ */
+
+Emitter.prototype.listeners = function(event){
+  this._callbacks = this._callbacks || {};
+  return this._callbacks[event] || [];
+};
+
+/**
+ * Check if this emitter has `event` handlers.
+ *
+ * @param {String} event
+ * @return {Boolean}
+ * @api public
+ */
+
+Emitter.prototype.hasListeners = function(event){
+  return !! this.listeners(event).length;
+};
+
+});
+
+require.register("component~reduce@1.0.1", function (exports, module) {
+
+/**
+ * Reduce `arr` with `fn`.
+ *
+ * @param {Array} arr
+ * @param {Function} fn
+ * @param {Mixed} initial
+ *
+ * TODO: combatible error handling?
+ */
+
+module.exports = function(arr, fn, initial){  
+  var idx = 0;
+  var len = arr.length;
+  var curr = arguments.length == 3
+    ? initial
+    : arr[idx++];
+
+  while (idx < len) {
+    curr = fn.call(null, curr, arr[idx], ++idx, arr);
+  }
+  
+  return curr;
+};
+});
+
+require.register("visionmedia~superagent@0.18.0", function (exports, module) {
 /**
  * Module dependencies.
  */
 
-var Emitter = _dereq_('emitter');
-var reduce = _dereq_('reduce');
+var Emitter = require("component~emitter@1.1.2");
+var reduce = require("component~reduce@1.0.1");
 
 /**
  * Root reference for iframes.
@@ -361,7 +607,7 @@ Response.prototype.setHeaderProperties = function(header){
 
 Response.prototype.parseBody = function(str){
   var parse = request.parse[this.type];
-  return parse && str && str.length
+  return parse
     ? parse(str)
     : null;
 };
@@ -421,6 +667,7 @@ Response.prototype.setStatusProperties = function(status){
  */
 
 Response.prototype.toError = function(){
+	debugger;
   var req = this.req;
   var method = req.method;
   var url = req.url;
@@ -457,16 +704,9 @@ function Request(method, url) {
   this.header = {};
   this._header = {};
   this.on('end', function(){
-    try {
-      var res = new Response(self);
-      if ('HEAD' == method) res.text = null;
-      self.callback(null, res);
-    } catch(e) {
-      var err = new Error('Parser is unable to parse the response');
-      err.parse = true;
-      err.original = e;
-      self.callback(err);
-    }
+    var res = new Response(self);
+    if ('HEAD' == method) res.text = null;
+    self.callback(null, res);
   });
 }
 
@@ -556,26 +796,6 @@ Request.prototype.set = function(field, val){
   }
   this._header[field.toLowerCase()] = val;
   this.header[field] = val;
-  return this;
-};
-
-/**
- * Remove header `field`.
- *
- * Example:
- *
- *      req.get('/')
- *        .unset('User-Agent')
- *        .end(callback);
- *
- * @param {String} field
- * @return {Request} for chaining
- * @api public
- */
-
-Request.prototype.unset = function(field){
-  delete this._header[field.toLowerCase()];
-  delete this.header[field];
   return this;
 };
 
@@ -837,6 +1057,7 @@ Request.prototype.crossDomainError = function(){
  */
 
 Request.prototype.timeoutError = function(){
+	debugger;
   var timeout = this._timeout;
   var err = new Error('timeout of ' + timeout + 'ms exceeded');
   err.timeout = timeout;
@@ -869,6 +1090,7 @@ Request.prototype.withCredentials = function(){
  */
 
 Request.prototype.end = function(fn){
+	debugger;
   var self = this;
   var xhr = this.xhr = getXHR();
   var query = this._query.join('&');
@@ -1082,375 +1304,141 @@ request.put = function(url, data, fn){
 
 module.exports = request;
 
-},{"emitter":3,"reduce":4}],3:[function(_dereq_,module,exports){
-
-/**
- * Expose `Emitter`.
- */
-
-module.exports = Emitter;
-
-/**
- * Initialize a new `Emitter`.
- *
- * @api public
- */
-
-function Emitter(obj) {
-  if (obj) return mixin(obj);
-};
-
-/**
- * Mixin the emitter properties.
- *
- * @param {Object} obj
- * @return {Object}
- * @api private
- */
-
-function mixin(obj) {
-  for (var key in Emitter.prototype) {
-    obj[key] = Emitter.prototype[key];
-  }
-  return obj;
-}
-
-/**
- * Listen on the given `event` with `fn`.
- *
- * @param {String} event
- * @param {Function} fn
- * @return {Emitter}
- * @api public
- */
-
-Emitter.prototype.on =
-Emitter.prototype.addEventListener = function(event, fn){
-  this._callbacks = this._callbacks || {};
-  (this._callbacks[event] = this._callbacks[event] || [])
-    .push(fn);
-  return this;
-};
-
-/**
- * Adds an `event` listener that will be invoked a single
- * time then automatically removed.
- *
- * @param {String} event
- * @param {Function} fn
- * @return {Emitter}
- * @api public
- */
-
-Emitter.prototype.once = function(event, fn){
-  var self = this;
-  this._callbacks = this._callbacks || {};
-
-  function on() {
-    self.off(event, on);
-    fn.apply(this, arguments);
-  }
-
-  on.fn = fn;
-  this.on(event, on);
-  return this;
-};
-
-/**
- * Remove the given callback for `event` or all
- * registered callbacks.
- *
- * @param {String} event
- * @param {Function} fn
- * @return {Emitter}
- * @api public
- */
-
-Emitter.prototype.off =
-Emitter.prototype.removeListener =
-Emitter.prototype.removeAllListeners =
-Emitter.prototype.removeEventListener = function(event, fn){
-  this._callbacks = this._callbacks || {};
-
-  // all
-  if (0 == arguments.length) {
-    this._callbacks = {};
-    return this;
-  }
-
-  // specific event
-  var callbacks = this._callbacks[event];
-  if (!callbacks) return this;
-
-  // remove all handlers
-  if (1 == arguments.length) {
-    delete this._callbacks[event];
-    return this;
-  }
-
-  // remove specific handler
-  var cb;
-  for (var i = 0; i < callbacks.length; i++) {
-    cb = callbacks[i];
-    if (cb === fn || cb.fn === fn) {
-      callbacks.splice(i, 1);
-      break;
-    }
-  }
-  return this;
-};
-
-/**
- * Emit `event` with the given args.
- *
- * @param {String} event
- * @param {Mixed} ...
- * @return {Emitter}
- */
-
-Emitter.prototype.emit = function(event){
-  this._callbacks = this._callbacks || {};
-  var args = [].slice.call(arguments, 1)
-    , callbacks = this._callbacks[event];
-
-  if (callbacks) {
-    callbacks = callbacks.slice(0);
-    for (var i = 0, len = callbacks.length; i < len; ++i) {
-      callbacks[i].apply(this, args);
-    }
-  }
-
-  return this;
-};
-
-/**
- * Return array of callbacks for `event`.
- *
- * @param {String} event
- * @return {Array}
- * @api public
- */
-
-Emitter.prototype.listeners = function(event){
-  this._callbacks = this._callbacks || {};
-  return this._callbacks[event] || [];
-};
-
-/**
- * Check if this emitter has `event` handlers.
- *
- * @param {String} event
- * @return {Boolean}
- * @api public
- */
-
-Emitter.prototype.hasListeners = function(event){
-  return !! this.listeners(event).length;
-};
-
-},{}],4:[function(_dereq_,module,exports){
-
-/**
- * Reduce `arr` with `fn`.
- *
- * @param {Array} arr
- * @param {Function} fn
- * @param {Mixed} initial
- *
- * TODO: combatible error handling?
- */
-
-module.exports = function(arr, fn, initial){  
-  var idx = 0;
-  var len = arr.length;
-  var curr = arguments.length == 3
-    ? initial
-    : arr[idx++];
-
-  while (idx < len) {
-    curr = fn.call(null, curr, arr[idx], ++idx, arr);
-  }
-  
-  return curr;
-};
-},{}],5:[function(_dereq_,module,exports){
-(function (global){
-
-;(function () {
-  if (global === this) {
-
-    global.window = global;
-
-    global.XMLHttpRequest = function XMLHttpRequest() {
-      var xhr = Ti.Network.createHTTPClient();
-
-      if (typeof xhr.getResponseHeaders !== 'undefined') {
-        xhr.getAllResponseHeaders = getAllResponseHeaders;
-      }
-
-      function getAllResponseHeaders() {
-        var headers = xhr.getResponseHeaders();
-        return Object.keys(headers).map(function (header) {
-          return header + ':' + headers[header];
-        }).join('\n') + '\n';
-      }
-
-      return xhr;
-    };
-  }
-})();
-
-var request = _dereq_('superagent');
-
-function getXHR() {
-  return new XMLHttpRequest();
-}
-
-request.Request.prototype.end = function (fn) {
-  var self = this;
-  var xhr = this.xhr = getXHR();
-  var query = this._query.join('&');
-  var timeout = this._timeout;
-  var redirects = this._redirects;
-  var data = this._data;
-
-  // store callback
-  this._callback = fn || noop;
-
-  // state change
-  xhr.onreadystatechange = function(){
-    if (4 != xhr.readyState) return;
-    if (0 == xhr.status) {
-      if (self.aborted) return self.timeoutError();
-      return;
-    }
-    if (self._finished) return;
-    self._finished = true;
-    self.emit('end');
-  };
-
-  xhr.onload = function () {
-    if (self._finished) return;
-    self._finished = true;
-    self.emit('end');
-  };
-
-  xhr.onerror = function (error) {
-    if (xhr.status > 0) {
-      if (self._finished) return;
-      self._finished = true;
-      self.emit('end');
-    }
-    else {
-      self.genericError(error);
-    }
-  };
-
-  // timeout
-  if (timeout) {
-    xhr.timeout = timeout;
-  }
-
-  if (redirects != null) {
-    this.redirects(redirects);
-  }
-
-  // querystring
-  if (query) {
-    query = request.serializeObject(query);
-    this.url += ~this.url.indexOf('?')
-      ? '&' + query
-      : '?' + query;
-  }
-
-  // initiate request
-  xhr.open(this.method, this.url, true);
-
-  // CORS
-  if (this._withCredentials) xhr.withCredentials = true;
-
-  // body
-  if ('GET' != this.method && 'HEAD' != this.method && 'string' != typeof data && !isHost(data)) {
-    // serialize stuff
-    var serialize = request.serialize[this.getHeader('Content-Type')];
-    if (serialize) data = serialize(data);
-  }
-
-  // set header fields
-  for (var field in this.header) {
-    if (null == this.header[field]) continue;
-    xhr.setRequestHeader(field, this.header[field]);
-  }
-
-  // send stuff
-  this.emit('request', this);
-  xhr.send(data);
-  return this;
-};
-
-request.Request.prototype.genericError = function(error) {
-  var err = new Error(error.error || 'Unknown error');
-
-  for (var k in error) {
-    if (k === 'source') continue;
-    err[k] = error[k];
-  }
-
-  if (/timed?\s*out/i.test(err + '')) {
-    err.timeout = this._timeout;
-  }
-
-  this.callback(err);
-};
-
-request.Request.prototype.timeout = function (timeout) {
-  this._timeout = timeout;
-  if (this.xhr) throw new Error("Cannot set the timeout once the HTTPClient has been created");
-  return this;
-};
-
-request.Request.prototype.redirects = function (redirects) {
-  this._redirects = redirects;
-  if (redirects > 0 || redirects === true) {
-    if (this.xhr) this.xhr.autoRedirect = true;
-  }
-  else if (redirects <= 0 || redirects === false) {
-    if (this.xhr) this.xhr.autoRedirect = false;
-  }
-  return this;
-};
-
-// Not necessary in Titanium SDK 3.4, HTTPClient#getResponseHeader is (as the
-// standard states) case insensitive.
-// See https://jira.appcelerator.org/browse/TIMOB-17585 for reference,
-// and https://github.com/appcelerator/titanium_mobile/pull/6053
-
-var originalSetHeaderProperties = request.Response.prototype.setHeaderProperties;
-request.Response.prototype.setHeaderProperties = function (header) {
-  this.header['content-type'] =
-    this.xhr.getResponseHeader('content-type') ||
-    this.xhr.getResponseHeader('Content-Type');
-  return originalSetHeaderProperties.call(this, header);
-};
-
-function isHost(obj) {
-  var str = {}.toString.call(obj);
-
-  switch (str) {
-    case '[object File]':
-    case '[object Blob]':
-    case '[object FormData]':
-      return true;
-    default:
-      return false;
-  }
-}
-
-function noop() {}
-
-module.exports = request;
-
-}).call(this,_dereq_("/Users/pier/Development/ti-superagent/node_modules/grunt-titaniumifier/node_modules/titaniumifier/lib/globals/global.js"))
-},{"/Users/pier/Development/ti-superagent/node_modules/grunt-titaniumifier/node_modules/titaniumifier/lib/globals/global.js":1,"superagent":2}]},{},[5])
-(5)
 });
+
+require.register("tipm~xhrpoly@master", function (exports, module) {
+/**
+ * xhr polyfill to make titaniums XHR library
+ * compatible with web based XHR libraries
+ */
+
+var Emitter = require("component~emitter@1.1.2");
+
+// Global Context
+
+var globalCTX = (function(){ return this; })();
+
+// Patch global scope
+
+globalCTX.XMLHttpRequest = XMLHttpRequest;
+
+// sub for browser global location property.
+
+globalCTX.location = {};
+
+// expose XMLHttpRequest
+
+module.exports = XMLHttpRequest;
+
+/**
+ * XMLHttpRequest
+ */
+
+function XMLHttpRequest() {
+  var self = this;
+  // titanium xhr client
+  this._proxy =  Ti.Network.createHTTPClient();
+  this.upload = {
+    onprogress: function(){}
+  }
+  this._proxy.onsendstream = function(e){
+    self.upload.onprogress({loaded:e.progress, total:1});
+  }
+}
+
+XMLHttpRequest.prototype.__proto__ = Emitter.prototype;
+
+XMLHttpRequest.prototype.abort = function() {
+  this._proxy.abort();
+};
+
+XMLHttpRequest.prototype.open = function(method, url, async) {
+  this._proxy.open(method, url, async);
+};
+
+XMLHttpRequest.prototype.getResponseHeader = function(name) {
+  return this._proxy.getResponseHeader(name);
+};
+
+XMLHttpRequest.prototype.send = function(data) {
+  this._proxy.send(data);
+};
+
+XMLHttpRequest.prototype.setRequestHeader = function(key, val) {
+  this._proxy.setRequestHeader(key, val);
+};
+
+Object.defineProperties(XMLHttpRequest.prototype, {
+   'onreadystatechange' : {
+      set: function (val) {
+        return this._proxy.onreadystatechange = val
+      }
+    },
+    'readyState': {
+      get: function () {
+        return this._proxy.readyState;
+      }
+    },
+    'responseText': {
+      get: function () {
+        return this._proxy.responseText;
+      }
+    },
+    'responseXML': {
+      get: function () {
+        return this._proxy.responseXML;
+      }
+    },
+    'status': {
+      get: function () {
+        return this._proxy.status;
+      }
+    }
+});
+
+XMLHttpRequest.prototype.getAllResponseHeaders = function() {
+  return '';
+};
+
+});
+
+require.register("superagent", function (exports, module) {
+
+// patch global scope with web XHR polyfill
+
+require("tipm~xhrpoly@master");
+
+//expose superagent
+
+var Agent = module.exports = require("visionmedia~superagent@0.18.0");
+
+/**
+ * attach file to Request
+ * @param  {String} name
+ * @param  {String} path
+ * @param  {String} filename
+ */
+
+Agent.Request.prototype.attach = function(name, path, filename) {
+  if (filename) { console.warn('Setting upload\'s filename is currently not supported'); }
+  if ('string' !== typeof path) throw new Error('A form field name (String) and file path (String) is required.');
+
+  var file = Ti.Filesystem.getFile(path);
+  var attachment = {};
+  attachment[name] = file.read();
+
+  this.send(attachment);
+
+  return this;
+};
+
+});
+
+if (typeof exports == "object") {
+  module.exports = require("superagent");
+} else if (typeof define == "function" && define.amd) {
+  define([], function(){ return require("superagent"); });
+} else {
+  this["superagent"] = require("superagent");
+}
+})()

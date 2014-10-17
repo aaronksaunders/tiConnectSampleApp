@@ -1,6 +1,12 @@
 var args = arguments[0] || {};
+
+// callback the is used when the user closes the window
 var callbackOnClose = null;
 
+/**
+ * opens the window and handles sets the function to be called
+ * when the user exits the window
+ */
 $.open = function(_callback) {
 	$.getView().open({
 		modal : true
@@ -18,8 +24,10 @@ function doHandleBtnClicked(_event) {
 	if (callbackOnClose) {
 		callbackOnClose({
 			success : _event.source.id === "okBtn",
-			name : $.name.value,
-			address : $.address.value
+			data : {
+				title : $.name.value,
+				address : $.address.value
+			}
 		});
 	}
 

@@ -1,14 +1,22 @@
-
 // global var for locations collection
-var Location = Alloy.Collections.Location;
+// see https://github.com/appcelerator/alloy/blob/master/test/apps/models/binding_listview/alloy.js
 
-
-function doMenuClick() {
-
-}
+// also see alloy.js where we have initiated the collecion; this is needed only
+// if you are using model and collection binding
+var Location = Alloy.Globals.Location;
 
 /**
  *
+ */
+function doMenuClick() {
+	// not using...
+}
+
+/**
+ * when the user clicks in the button on IOS or selects the menu on android
+ *
+ * we will open a new window/controller and get the information for saving a
+ * new model to the backend system.
  */
 function doAddItemClicked() {
 	var controller = Alloy.createController("newItem");
@@ -17,20 +25,24 @@ function doAddItemClicked() {
 		Ti.API.info('_response from add ' + JSON.stringify(_response, null, 2));
 		if (_response.success) {
 			// i have some data to add
+
+			saveObject(_response.data);
 		} else {
 			// no data to add
+			alert('User camcelled action');
 		}
 	});
 }
 
 /**
- *
+ * this function is called when NOT using model/collection binding
  */
-function drawList() {
+function drawListWithNoBinding() {
 	// create the collection
 	var collection = Alloy.createCollection("Location");
 
-	// fetch all items with promise
+	// fetch all items with promise, see readme for more information
+	// on promises and the benefits over callback hell!!
 	var promise = collection.fetch().promise;
 
 	promise.then(function(_data) {
@@ -57,8 +69,9 @@ function drawList() {
 		$.section.setItems(items);
 
 	}, function(_error) {
+		// if there was and error getting the data, display error here
 		Ti.API.error(JSON.stringify(_error, null, 2));
-		alert(JSON.stringify(_error, null, 2));
+		alert("Error getting data from server\n" + JSON.stringify(_error, null, 2));
 	});
 }
 
@@ -68,47 +81,64 @@ function drawList() {
 function doTransform(_model) {
 	var o = _model.toJSON();
 	return {
-		title : (o.title  || 'Missing'),
-		subtitle : (o.address  || 'Missing')
+		title : (o.title || 'Missing'),
+		subtitle : (o.address || 'Missing')
 	};
 
 }
 
-
+// here we are adding the ListView to the window programatically
+// since we are using platform selectors in the index.xml view file.
+//
+// I have used this approach so I do not need to create multiple files
 $.homeWindow.add($.homeList);
+
+// open the main view in index.xml
 $.getView().open();
 
-// set this to true to not use binding
+// ****
+// SET TO FALSE TO SEE DEMONSTRATION WITHOUT BINDING
+// ****
+
 if (false) {
-	drawList();
+	drawListWithNoBinding();
 } else {
-	Location.fetch();
+	// fetching the data will trigger the application to update the
+	// ListView and render the content
+	var aPromise = Location.fetch().promise;
+	aPromise.then(function(_data) {
+		// dont really care, binding will handle this!
+	}, function(_error) {
+		alert(JSON.stringify(_error));
+	});
+
 }
 
 /**
  * saves an object
+ *
+ * @params _params.title
+ * @params _params.address
  */
-function saveObject() {
+function saveObject(_params) {
 
 	// the IBM Bluemix documentation specifies how the data must be formatted for uploading
 	// so we set up the dataas such and save it to the model.
 	var data = {
-		"attributes" : {
-			"title" : "Test With Class Name",
-			"address" : "1134 Buchanan St, NW",
-			"_geoloc" : [151.201523, -33.86887]
-		}
+		"attributes" : _params
 	};
 
 	// create the model
 	var model = Alloy.createModel("Location");
 
 	// call save, passing the data, and getting a promise in return
-	var $promise = model.save(data);
+	var $promise = model.save(data).promise;
 
 	// handle success or error with the promise
-	$promise.promise.then(function(_response) {
+	$promise.then(function(_response) {
 		console.log(JSON.stringify(_response, null, 2));
+		alert("Item Saved Successfully");
+		Alloy.Globals.Location.fetch()
 	}, function(_error) {
 		console.log(JSON.stringify(_error, null, 2));
 	});
