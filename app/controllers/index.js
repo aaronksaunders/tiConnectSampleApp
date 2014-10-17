@@ -56,6 +56,8 @@ function drawListWithNoBinding() {
 		for (var i in _data.models) {
 			// add items to an array
 			items.push({
+				canEdit : true,
+				_objectId : _data.models[i].id,
 				title : {
 					text : _data.models[i].get('title') || 'Missing'// assign the values from the data
 				},
@@ -82,9 +84,33 @@ function doTransform(_model) {
 	var o = _model.toJSON();
 	return {
 		title : (o.title || 'Missing'),
-		subtitle : (o.address || 'Missing')
+		subtitle : (o.address || 'Missing'),
+		objectId : _model.id
 	};
 
+}
+
+function handleDeleteItem(_event) {
+	debugger;
+	Ti.API.info('-event ' + objectId);
+	var objectId = _event.section.getItemAt(_event.itemIndex).properties._objectId;
+
+	var model = Alloy.createModel('Location', {
+		id : objectId
+	});
+	model.destroy().promise.then(function(_response) {
+		alert("Item Deleted Successfully");
+	}, function(_error) {
+		alert("Error " + JSON.stringify(_error, null, 2));
+	});
+}
+
+function setUpEvents() {
+	if (OS_IOS) {
+		$.homeList.addEventListener('delete', handleDeleteItem);
+	} else {
+		$.homeList.addEventListener('longpress', handleDeleteItem);
+	}
 }
 
 // here we are adding the ListView to the window programatically
@@ -95,6 +121,9 @@ $.homeWindow.add($.homeList);
 
 // open the main view in index.xml
 $.getView().open();
+
+// setup ListView Events
+setUpEvents();
 
 // ****
 // SET TO FALSE TO SEE DEMONSTRATION WITHOUT BINDING

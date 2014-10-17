@@ -81,9 +81,26 @@ function Sync(method, model, opts) {
 		break;
 
 	case "delete":
-		delete data[model.id];
-		storeModel(data);
-		resp = model.toJSON();
+		var readURL = "";
+		var objectId = (opts && opts.id || model && model.id);
+
+		superAgent.del(url + '/objects/' + objectId)//
+		.set('IBM-Application-Secret', Alloy.CFG.bluemix.appSecret)//
+		.set('Accept', 'application/json')//
+		.end(function(err, res) {
+
+			if (!err) {
+				resp = res.body;
+				debugger;
+				_.isFunction(opts.success) && opts.success(resp);
+				
+				// on delete, return the response, not model
+				promise.resolve(resp);
+			} else {
+				_.isFunction(opts.error) && opts.error(err);
+				promise.reject(err);
+			}
+		});
 	}
 
 	return promise;
