@@ -33,7 +33,7 @@ So if you look in the `alloy.js` file in the project's root directory, you will 
 
 A Better HTTPClient
 ====
-[Titanium Version of SuperAgent](https://github.com/tipm/superagent) helps to make the code in the sync adapter cleaner and more readable.
+[Titanium Version of SuperAgent](https://github.com/smclab/ti-superagent) helps to make the code in the sync adapter cleaner and more readable.
 
 See Example below
 
