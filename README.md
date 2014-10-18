@@ -1,10 +1,10 @@
 Welcome to your Appcelerator Titanium Mobile Project for TiConnect Conference
 ====
-![Screenshot 2014-10-07 09.45.35.png](https://bitbucket.org/repo/eny6ab/images/4039549732-Screenshot%202014-10-07%2009.45.35.png)
+![Screenshot 2014-10-07 09.45.35.png](https://raw.githubusercontent.com/aaronksaunders/tiConnectSampleApp/master/Screenshot%202014-10-18%2011.52.44.png)
 
 This is a sample project showing how to create a sync adapter that integrates with [IBM BlueMix - Mobile Cloud](https://www.ng.bluemix.net/docs/#starters/mobile/index.html#overview)
 ====
-![Screenshot 2014-10-10 17.24.18.png](https://bitbucket.org/repo/eny6ab/images/1140950345-Screenshot%202014-10-10%2017.24.18.png)
+![Screenshot 2014-10-10 17.24.18.png](https://raw.githubusercontent.com/aaronksaunders/tiConnectSampleApp/master/Screenshot%202014-10-10%2017.24.18.png)
 
 
 IBM BlueMix Credentials... Use Your Own!!
