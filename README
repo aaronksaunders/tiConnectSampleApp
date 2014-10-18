@@ -44,7 +44,7 @@ See Example below
 	superAgent.get(readURL)//
 	.set('IBM-Application-Secret', Alloy.CFG.bluemix.appSecret)//
 	.set('Accept', 'application/json')//
-	.end(function(res) {
+	.end(function(res,error) {
 	    console.log(res.body.object);
             // do something with response...
 
