@@ -7,6 +7,7 @@ function guid() {
 }
 
 function InitAdapter() {
+	//throw "localStorage persistence supported only with MobileWeb.";
 	console.log(Alloy.CFG);
 }
 
@@ -55,8 +56,9 @@ function Sync(method, model, opts) {
 		superAgent.get(readURL)//
 		.set('IBM-Application-Secret', Alloy.CFG.bluemix.appSecret)//
 		.set('Accept', 'application/json')//
+		//.timeout(10000)//
 		.end(function(err, res) {
-			Ti.API.info(res.body.object);
+			//console.log(res.body.object);
 
 			if (!err) {
 				resp = res.body;
@@ -73,7 +75,9 @@ function Sync(method, model, opts) {
 		break;
 
 	case "update":
-		// NOT IMPLEMENTED
+		data[model.id] = model;
+		storeModel(data);
+		resp = model.toJSON();
 		break;
 
 	case "delete":

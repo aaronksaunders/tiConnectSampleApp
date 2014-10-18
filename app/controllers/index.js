@@ -90,10 +90,8 @@ function doTransform(_model) {
 
 }
 
-/**
- * 
- */
 function handleDeleteItem(_event) {
+	debugger;
 	Ti.API.info('-event ' + JSON.stringify(_event));
 	var objectId = _event.section.getItemAt(_event.itemIndex).properties._objectId;
 
