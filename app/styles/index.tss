@@ -59,5 +59,13 @@
 
 // android stuff
 "#menu1": {}
-"#actionbar": {}
+
+"MenuItem": {
+    showAsAction: Ti.Android.SHOW_AS_ACTION_ALWAYS
+},
+"#actionbar": {
+    icon: "/actionicon.png",
+    displayHomeAsUp: true,
+    backgroundImage: "/actionbackground.png"
+}
 
