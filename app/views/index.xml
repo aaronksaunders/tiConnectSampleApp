@@ -1,0 +1,50 @@
+<Alloy>
+	<!-- THE IOS WINDOW -->
+	<NavigationWindow platform="ios">
+		<Window id='homeWindow'>
+			<RightNavButton>
+				<Button id="addItemBtn" onClick="doAddItemClicked" />
+			</RightNavButton>
+		</Window>
+	</NavigationWindow>
+
+	<!-- THE ANDROID WINDOW -->
+	<Window id='homeWindow'  platform="android" navBarHidden="false">
+		<ActionBar id="actionbar" onHomeIconItemSelected="doMenuClick" />
+		<Menu>
+			<MenuItem id="menu1" title="Add Item" onClick="doAddItemClicked" />
+		</Menu>
+	</Window>
+
+	<!-- the list view, gets added programatically instead of using a seperate file and -->
+	<!-- a requires element, I have included a list view here with and without binding  -->
+	<ListView  id='homeList' defaultItemTemplate='template'  platform="none">
+		<Templates>
+			<ItemTemplate name="template" class="template" >
+				<View class="templateView" onLongpress="handleDeleteItem">
+					<Label bindId="title" class="title" id="title" />
+					<Label bindId="subtitle" class="subtitle" id="subtitle" />
+				</View>
+			</ItemTemplate>
+		</Templates>
+		<ListSection id='section'></ListSection>
+	</ListView>
+
+	<!-- using binding -->
+	<ListView  id='homeList' defaultItemTemplate='template'>
+		<Templates>
+			<ItemTemplate name="template" class="template">
+				<View class="templateView"  onLongpress="handleDeleteItem">
+					<Label bindId="title" class="title" id="title" />
+					<Label bindId="subtitle" class="subtitle" id="subtitle" />
+				</View>
+			</ItemTemplate>
+		</Templates>
+		<!-- here we have the collection assigned to the section and the transformation -->
+		<!-- function that is used to set the object correctly to match bindings        -->
+		<ListSection id="section" dataCollection="Location" dataTransform="doTransform">
+			<ListItem template="template" canEdit=true title:text="{title}"
+			subtitle:text="{subtitle}" _objectId="{objectId}"/>
+		</ListSection>
+	</ListView>
+</Alloy>

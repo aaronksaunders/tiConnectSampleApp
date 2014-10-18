@@ -1,0 +1,133 @@
+Welcome to your Appcelerator Titanium Mobile Project for TiConnect Conference
+====
+![Screenshot 2014-10-07 09.45.35.png](https://bitbucket.org/repo/eny6ab/images/4039549732-Screenshot%202014-10-07%2009.45.35.png)
+
+This is a sample project showing how to create a sync adapter that integrates with [IBM BlueMix - Mobile Cloud](https://www.ng.bluemix.net/docs/#starters/mobile/index.html#overview)
+====
+![Screenshot 2014-10-10 17.24.18.png](https://bitbucket.org/repo/eny6ab/images/1140950345-Screenshot%202014-10-10%2017.24.18.png)
+
+
+IBM BlueMix Credentials... Use Your Own!!
+=====
+This code utilizes the following credentials which can be found in the `config.json` file
+
+	"env:development": {
+		"bluemix" : {
+			"appId" : "244246c0-bf7a-41f9-b561-f71815d33bd8",
+			"appSecret" : "e1567ab2d13015d9dbef414213e7ac6bdb1c8530"
+		}
+	},
+
+Hacking of alloy.js to get promises to work
+=====
+
+We are using promises in this adapter to avoid the pain of callback hell, see more information on callbacks here
+[Q Promises - A tool for making and composing asynchronous promises in JavaScript](http://documentup.com/kriskowal/q/)
+
+We had to do some special hacking here to get promises to work in the sync adapter because of the way that controllers and models are created; basically they do not return anything after the object is created and that is where I needed to return the promise.
+
+So if you look in the `alloy.js` file in the project's root directory, you will see that I overrode the creation methods for the Collection and the Model. The only change is the addition of the return from the sync call
+
+    // line 21 & the same on line 43
+    return mod.sync(method, model, opts);
+
+A Better HTTPClient
+====
+[Titanium Version of SuperAgent](https://github.com/smclab/ti-superagent) helps to make the code in the sync adapter cleaner and more readable.
+
+See Example below
+
+
+```
+#!javascript
+
+	superAgent.get(readURL)//
+	.set('IBM-Application-Secret', Alloy.CFG.bluemix.appSecret)//
+	.set('Accept', 'application/json')//
+	.end(function(res,error) {
+	    console.log(res.body.object);
+            // do something with response...
+
+	});
+```
+
+Utilizing Model and Collections ability to be extended 
+====
+The data that is returned from the REST API is not correctly formatted for the Backbone models/collections. In the Model file, we extend the objects and utilize the [Backbone.Model.parse](http://backbonejs.org/#Model-parse) functionality to clean up the data and set the response correctly
+
+Clean interaction with REST API using models
+====
+### Saving an object ###
+
+```
+#!javascript
+
+function saveObject() {
+	var data = {
+		"attributes" : {
+			"title" : "Test With Class Name",
+			"address" : "1134 Buchanan St, NW",
+			"_geoloc" : [151.201523, -33.86887]
+		}
+	};
+
+	var model = Alloy.createModel("Location");
+	var $promise = model.save(data);
+
+	$promise.promise.then(function(_response) {
+		console.log("SUCCESS " + JSON.stringify(_response, null, 2));
+	}, function(_error) {
+		console.log("ERROR " + JSON.stringify(_error, null, 2));
+	});
+}
+```
+### Fetching an object ###
+
+```
+#!javascript
+
+var collection = Alloy.createCollection("Location");
+
+// FETCH ONE ITEM BY ID WITH PROMISE
+var $promise = collection.fetch({
+	id : "e83b4bb4692e0798d54bd385544179547493349d"
+});
+
+$promise.promise.then(function(_result) {
+	// get one item
+	console.log("Success " + JSON.stringify(_result, null, 2));
+}, function(_error) {
+	console.log("In Error Handler " + _error);
+});
+```
+
+
+### Fetching All Objects ###
+
+```
+#!javascript
+
+// create the collection
+var collection = Alloy.createCollection("Location");
+
+// FETCH ONE ITEM BY ID WITH PROMISE
+var $promise = collection.fetch();
+
+$promise.promise.then(function(_result) {
+	// get all items, no id specified
+	console.log("in then " + JSON.stringify(_result, null, 2));
+}, function(_error) {
+	console.log("in error " + _error);
+});
+```
+
+
+
+----------------------------------
+Stuff our legal folk make us say:
+
+
+Copyright (c) 2014 by Aaron K Saunders. All Rights Reserved.
+
+Licensed under the Apache Public License (Version 2). Please
+see the LICENSE file for the full license.

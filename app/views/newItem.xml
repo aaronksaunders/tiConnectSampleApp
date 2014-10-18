@@ -1,0 +1,11 @@
+<Alloy>
+	<Window id="mainWindow" class="container" title="Add Item">
+		<Label text="Enter information for New Item" class="headerLabel"></Label>
+		<TextField id="name"></TextField>
+		<TextField id="address"></TextField>
+		<View id="btnContainer" onClick="doHandleBtnClicked">
+			<Button id='okBtn'>Add Item</Button>
+			<Button id='cancelBtn'>Cancel</Button>
+		</View>
+	</Window>
+</Alloy>
